@@ -3,8 +3,10 @@
 > A powerful, type-safe workflow automation framework for building AI-powered applications with LLM integration.
 
 [![npm version](https://img.shields.io/npm/v/roast-ts.svg)](https://www.npmjs.com/package/roast-ts)
+[![npm downloads](https://img.shields.io/npm/dm/roast-ts.svg)](https://www.npmjs.com/package/roast-ts)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/roast-ts)](https://bundlephobia.com/package/roast-ts)
 
 ## Table of Contents
 
@@ -43,6 +45,20 @@ Roast TypeScript is a production-ready framework for building AI-powered workflo
 - **Developer Friendly**: Intuitive fluent API with excellent IDE support
 - **Flexible**: Support for both programmatic and YAML-based workflow definitions
 - **Extensible**: Easy to create custom tools and integrate with existing systems
+
+### Why Structured Workflows Matter
+
+If you've worked with multi-agent AI systems, you've likely encountered the chaos that emerges when agents operate without rails. What starts as a simple task can quickly devolve into a tangled mess of agents calling each other, losing context, or worse—getting stuck in infinite loops. Your customers expect software to be predictable and reliable, but unstructured agent interactions are anything but.
+
+Roast solves this by putting you back in control:
+
+- **You Own the Flow**: Define explicit paths for execution—no more agents wandering off into unexpected territory
+- **Bounded Context**: Each agent knows exactly what it owns and where its responsibilities end
+- **Small, Focused Agents**: Instead of monolithic agents trying to do everything, compose small, specialized tools
+- **No Infinite Loops**: Built-in safeguards ensure your workflows terminate predictably
+- **Deterministic Results**: Same inputs produce same outputs, making debugging and testing actually possible
+
+Think of it as guard rails for AI: you get the power of intelligent agents without sacrificing the predictability your applications need.
 
 ## Features
 
@@ -612,6 +628,3 @@ This project draws inspiration from [Shopify's Roast](https://github.com/Shopify
 
 MIT © [Roast TypeScript Contributors](LICENSE)
 
----
-
-Built with ❤️ by the Roast community
