@@ -1,0 +1,90 @@
+{
+  "name": "roast-ts",
+  "version": "0.1.0",
+  "description": "A powerful, type-safe workflow automation framework for building AI-powered applications with LLM integration",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roast-ts/roast-ts.git"
+  },
+  "homepage": "https://github.com/roast-ts/roast-ts#readme",
+  "bugs": {
+    "url": "https://github.com/roast-ts/roast-ts/issues"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:unit": "jest --testPathPattern=unit",
+    "test:integration": "jest --config=jest.integration.config.js",
+    "test:security": "jest --testPathPattern=security",
+    "test:performance": "jest --testPathPattern=performance",
+    "test:concurrency": "jest --testPathPattern=concurrency",
+    "test:e2e": "jest --testPathPattern=e2e --runInBand",
+    "test:stress": "jest --testPathPattern=stress",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rm -rf dist coverage",
+    "lint": "eslint src --ext ts",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run clean && npm run build && npm run test",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "ai",
+    "workflow",
+    "llm",
+    "typescript",
+    "automation",
+    "openai",
+    "anthropic",
+    "gpt",
+    "claude",
+    "langchain",
+    "agent",
+    "orchestration"
+  ],
+  "author": "Roast TypeScript Contributors",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@types/minimatch": "^5.1.2",
+    "@types/uuid": "^10.0.0",
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "glob": "^10.3.10",
+    "gray-matter": "^4.0.3",
+    "handlebars": "^4.7.8",
+    "inquirer": "^9.2.12",
+    "js-yaml": "^4.1.0",
+    "liquidjs": "^10.10.0",
+    "minimatch": "^10.0.1",
+    "node-fetch": "^3.3.2",
+    "ora": "^8.0.1",
+    "uuid": "^11.1.0",
+    "winston": "^3.11.0",
+    "zod": "^3.22.4",
+    "zod-to-json-schema": "^3.24.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

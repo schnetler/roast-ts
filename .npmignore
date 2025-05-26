@@ -1,0 +1,65 @@
+# Source files
+src/
+*.ts
+!*.d.ts
+
+# Test files
+__tests__/
+*.test.*
+*.spec.*
+jest.config.ts
+jest.integration.config.js
+jest.integration.setup.js
+coverage/
+.nyc_output/
+
+# Development files
+.eslintrc*
+.prettierrc*
+tsconfig.json
+*.map
+
+# Documentation source
+docs/
+*.md
+!README.md
+
+# CI/CD
+.github/
+.travis.yml
+.gitlab-ci.yml
+.circleci/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencies
+node_modules/
+
+# Build tools
+.npmrc
+.yarnrc
+
+# Misc
+.env*
+.git*
+temp/
+tmp/
+*.tgz
+test-debug.js
+test-round-trip.js
+TEST_COVERAGE_*.md
