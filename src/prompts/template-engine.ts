@@ -293,6 +293,10 @@ export class TemplateEngine {
     
     return compiled;
   }
+  
+  clearCache(): void {
+    this.templateCache.clear();
+  }
 
   async render(template: string, data: any = {}): Promise<string> {
     const compiled = this.compile(template);

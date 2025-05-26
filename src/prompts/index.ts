@@ -1,7 +1,9 @@
-// Core classes
-export { TemplateEngine } from './template-engine';
-export { PromptResolver } from './prompt-resolver';
-export { PromptManager } from './prompt-manager';
+// Core classes - these are both exported and imported for local use
+import { TemplateEngine } from './template-engine';
+import { PromptResolver } from './prompt-resolver';
+import { PromptManager } from './prompt-manager';
+
+export { TemplateEngine, PromptResolver, PromptManager };
 
 // Types and interfaces
 export type {
@@ -45,6 +47,12 @@ export type {
   BuiltInFunctionCategory,
   BuiltInFunctionRegistry
 } from './types';
+
+// Import types for utility functions
+import type { PromptManagerOptions } from './prompt-manager';
+import type { PromptResolverOptions } from './prompt-resolver';
+import type { TemplateEngineOptions } from './template-engine';
+import type { PromptConfig, BuiltInFunctionCategory } from './types';
 
 // Utility functions
 export const createPromptManager = (options: PromptManagerOptions) => {

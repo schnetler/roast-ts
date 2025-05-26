@@ -66,10 +66,10 @@ export class TestHelpers {
       loadSession: jest.fn(),
       updateWorkflow: jest.fn(),
       updateStep: jest.fn(),
-      subscribe: jest.fn(),
-      unsubscribe: jest.fn(),
+      subscribe: jest.fn().mockReturnValue(() => {}),
       getState: jest.fn(),
-      saveSnapshot: jest.fn()
+      saveStep: jest.fn(),
+      createSession: jest.fn()
     };
   }
 

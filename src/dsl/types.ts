@@ -185,6 +185,18 @@ export interface DSLWorkflowStep extends BaseDSLStep {
   workflow?: Workflow<any>;
 }
 
+// DSL type aliases for backward compatibility and cleaner imports
+export type StepDSL = DSLWorkflowStep;
+export type ResourceDSL = BaseDSLStep & { type: 'resource' };
+export type TransformDSL<TIn, TOut> = (input: TIn) => TOut | Promise<TOut>;
+export type ValidationDSL = ValidationResult;
+export type ComparisonOperator = 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'in' | 'nin';
+export type ConditionalExpression<T> = {
+  operator: ComparisonOperator;
+  left: T | ((ctx: any) => T);
+  right: T | ((ctx: any) => T);
+};
+
 // Main DSL interface
 export interface WorkflowDSL<TContext = {}> {
   // Configuration

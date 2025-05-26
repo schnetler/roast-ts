@@ -1,10 +1,10 @@
-import { LLMClient, CompletionRequest, CompletionResponse, CompletionChunk } from '@/shared/types';
+import { LLMClient, LLMRequest, LLMResponse, LLMChunk } from '@/shared/types';
 
 export class MockLLMClient implements LLMClient {
-  private responses: Map<string, CompletionResponse> = new Map();
-  private streamResponses: Map<string, CompletionChunk[]> = new Map();
+  private responses: Map<string, LLMResponse> = new Map();
+  private streamResponses: Map<string, LLMChunk[]> = new Map();
 
-  async complete(request: CompletionRequest): Promise<CompletionResponse> {
+  async complete(request: LLMRequest): Promise<LLMResponse> {
     const key = JSON.stringify(request);
     const response = this.responses.get(key);
     
@@ -14,16 +14,7 @@ export class MockLLMClient implements LLMClient {
     
     // Default response
     return {
-      id: 'test-completion-123',
-      model: request.model,
-      choices: [{
-        index: 0,
-        message: {
-          role: 'assistant',
-          content: 'Mock response for: ' + request.messages[request.messages.length - 1].content
-        },
-        finish_reason: 'stop'
-      }],
+      content: 'Mock response for: ' + request.messages[request.messages.length - 1].content,
       usage: {
         prompt_tokens: 10,
         completion_tokens: 20,
@@ -32,7 +23,7 @@ export class MockLLMClient implements LLMClient {
     };
   }
 
-  async *stream(request: CompletionRequest): AsyncIterableIterator<CompletionChunk> {
+  async *stream(request: LLMRequest): AsyncIterableIterator<LLMChunk> {
     const key = JSON.stringify(request);
     const chunks = this.streamResponses.get(key);
     
@@ -47,37 +38,25 @@ export class MockLLMClient implements LLMClient {
     const response = 'Mock streaming response';
     for (const char of response) {
       yield {
-        id: 'test-stream-123',
-        model: request.model,
-        choices: [{
-          index: 0,
-          delta: {
-            content: char
-          },
-          finish_reason: null
-        }]
+        content: char,
+        done: false
       };
     }
     
     // Final chunk
     yield {
-      id: 'test-stream-123',
-      model: request.model,
-      choices: [{
-        index: 0,
-        delta: {},
-        finish_reason: 'stop'
-      }]
+      content: '',
+      done: true
     };
   }
 
   // Test helper methods
-  setResponse(request: Partial<CompletionRequest>, response: CompletionResponse): void {
+  setResponse(request: Partial<LLMRequest>, response: LLMResponse): void {
     const key = JSON.stringify(request);
     this.responses.set(key, response);
   }
 
-  setStreamResponse(request: Partial<CompletionRequest>, chunks: CompletionChunk[]): void {
+  setStreamResponse(request: Partial<LLMRequest>, chunks: LLMChunk[]): void {
     const key = JSON.stringify(request);
     this.streamResponses.set(key, chunks);
   }

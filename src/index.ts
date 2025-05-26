@@ -5,14 +5,14 @@ export * from './shared/types';
 export * from './shared/utils';
 
 // Workflow exports
-export { createWorkflow, WorkflowBuilder } from './dsl/workflow-factory';
+export { createWorkflow } from './dsl/workflow-factory';
 export { WorkflowEngine } from './workflow/workflow-engine';
 export { WorkflowExecutor } from './workflow/workflow-executor';
 export { StepExecutor } from './workflow/step-executor';
-export { loadWorkflowFromYaml } from './workflow/yaml-loader';
+export { loadYAMLWorkflow } from './workflow/yaml-loader';
 
 // Tool exports
-export { createTool, ToolBuilder } from './tools/tool-builder';
+export { ToolBuilder } from './tools/tool-builder';
 export { ToolRegistry } from './tools/tool-registry';
 export { ToolExecutor } from './tools/tool-executor';
 export * from './tools/built-in';
@@ -20,11 +20,11 @@ export * from './tools/built-in';
 // Resource exports
 export { ResourceFactory } from './resources/resource-factory';
 export { ResourceProcessor } from './resources/resource-processor';
-export { FileResource } from './resources/handlers/file-resource';
-export { DirectoryResource } from './resources/handlers/directory-resource';
-export { URLResource } from './resources/handlers/url-resource';
-export { GlobResource } from './resources/handlers/glob-resource';
-export { NoneResource } from './resources/handlers/none-resource';
+export { FileResourceHandler } from './resources/handlers/file-resource';
+export { DirectoryResourceHandler } from './resources/handlers/directory-resource';
+export { UrlResourceHandler } from './resources/handlers/url-resource';
+export { GlobResourceHandler } from './resources/handlers/glob-resource';
+export { NoneResourceHandler } from './resources/handlers/none-resource';
 export * from './resources/types';
 
 // State management exports
@@ -43,33 +43,54 @@ export * from './prompts/types';
 // Configuration exports
 export { ConfigLoader } from './config/config-loader';
 export { ConfigValidator } from './config/config-validator';
-export * from './config/config-schema';
+export { 
+  RoastConfig,
+  ProjectConfig,
+  WorkflowDefaults,
+  ToolConfiguration,
+  ProviderConfig,
+  PluginConfig,
+  FeatureFlags,
+  ConfigValidationError,
+  RoastConfigSchema,
+  ProjectConfigSchema,
+  WorkflowDefaultsSchema,
+  ProviderConfigSchema
+} from './config/config-schema';
 
 // Helper exports
-export { Logger } from './helpers/logger';
+export { StructuredLogger } from './helpers/logger';
 export { PathResolver } from './helpers/path-resolver';
 
 // DSL exports
-export * from './dsl/types';
+// Note: We're explicitly importing to avoid conflicts with shared/types
+export { 
+  WorkflowDSL,
+  AgentConfig,
+  StepHandler,
+  ConditionFunction,
+  LoopHandler,
+  ErrorHandler,
+  ItemsFunction,
+  TemplateFunction
+} from './dsl/types';
 export { WorkflowDSLImpl } from './dsl/workflow-dsl-impl';
-export { Transpiler } from './dsl/transpiler';
-export { Converter } from './dsl/converter';
+export { DSLTranspiler } from './dsl/transpiler';
+export { WorkflowConverter } from './dsl/converter';
 export * as DSLCombinators from './dsl/combinators';
 
 // CLI exports (if needed programmatically)
-export * from './cli';
+// TODO: Add CLI exports when implemented
 
 // Re-export commonly used types for convenience
 export type {
   Workflow,
-  WorkflowStep,
+  StepDefinition,
   Tool,
   Resource,
   WorkflowState,
   WorkflowConfig,
-  LLMProvider,
-  ToolInput,
-  ToolOutput,
+  Provider,
   StepType,
-  ExecutionContext
+  Logger
 } from './shared/types';

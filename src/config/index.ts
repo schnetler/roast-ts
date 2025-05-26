@@ -15,6 +15,8 @@ export {
   ProviderConfigSchema
 } from './config-schema';
 
+import { RoastConfig } from './config-schema';
+
 // Helper function for creating typed configurations
 export function defineConfig(config: RoastConfig): RoastConfig;
 export function defineConfig(
