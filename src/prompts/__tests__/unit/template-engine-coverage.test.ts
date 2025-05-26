@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { TemplateEngine } from '../../template-engine';
 
-describe.skip('TemplateEngine - Coverage Tests', () => {
+describe('TemplateEngine - Coverage Tests', () => {
   let engine: TemplateEngine;
   let mockLogger: any;
 
@@ -14,12 +14,15 @@ describe.skip('TemplateEngine - Coverage Tests', () => {
       child: jest.fn(() => mockLogger),
     };
     
-    engine = new TemplateEngine({ logger: mockLogger });
+    engine = new TemplateEngine({ 
+      logger: mockLogger,
+      enableCache: false  // Disable caching for tests
+    });
   });
 
   describe('Constructor options', () => {
     it('should use default logger when not provided', () => {
-      const engineWithDefaults = new TemplateEngine();
+      const engineWithDefaults = new TemplateEngine({ enableCache: false });
       expect(engineWithDefaults).toBeInstanceOf(TemplateEngine);
     });
   });
@@ -128,6 +131,7 @@ describe.skip('TemplateEngine - Coverage Tests', () => {
 
     it('should throw in strict mode for missing variables', async () => {
       const strictEngine = new TemplateEngine({ 
+        enableCache: false,
         strictMode: true,
         logger: mockLogger 
       });
@@ -138,6 +142,7 @@ describe.skip('TemplateEngine - Coverage Tests', () => {
 
     it('should throw in strict mode for function errors', async () => {
       const strictEngine = new TemplateEngine({ 
+        enableCache: false,
         strictMode: true,
         logger: mockLogger 
       });
@@ -168,6 +173,7 @@ describe.skip('TemplateEngine - Coverage Tests', () => {
 
     it('should not escape when disabled', async () => {
       const noEscapeEngine = new TemplateEngine({ 
+        enableCache: false,
         escapeHtml: false,
         logger: mockLogger 
       });
@@ -253,7 +259,8 @@ describe.skip('TemplateEngine - Coverage Tests', () => {
     it('should parse with custom delimiters', async () => {
       const customEngine = new TemplateEngine({
         delimiters: ['<%', '%>'],
-        logger: mockLogger
+        logger: mockLogger,
+        enableCache: false
       });
       
       const result = await customEngine.render('Hello <%name%>!', { name: 'World' });

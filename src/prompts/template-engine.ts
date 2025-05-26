@@ -5,6 +5,7 @@ export interface TemplateEngineOptions {
   strictMode?: boolean;
   escapeHtml?: boolean;
   logger?: Logger;
+  enableCache?: boolean;
 }
 
 export interface TemplateFunction {
@@ -47,6 +48,7 @@ export class TemplateEngine {
       delimiters: options.delimiters || ['{{', '}}'],
       strictMode: options.strictMode ?? false,
       escapeHtml: options.escapeHtml ?? true,
+      enableCache: options.enableCache ?? true,
       logger: options.logger || {
         debug: () => {},
         info: () => {},
@@ -277,13 +279,18 @@ export class TemplateEngine {
   }
 
   compile(template: string): CompiledTemplate {
-    // Check cache first
-    if (this.templateCache.has(template)) {
+    // Check cache first if caching is enabled
+    if (this.options.enableCache && this.templateCache.has(template)) {
       return this.templateCache.get(template)!;
     }
 
     const compiled = this.compileTemplate(template);
-    this.templateCache.set(template, compiled);
+    
+    // Only cache if caching is enabled
+    if (this.options.enableCache) {
+      this.templateCache.set(template, compiled);
+    }
+    
     return compiled;
   }
 

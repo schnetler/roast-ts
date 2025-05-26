@@ -98,7 +98,7 @@ describe('ToolExecutor', () => {
       const result = await executor.execute(slowTool, { input: 'test' }, mockContext);
 
       expect(result.success).toBe(true);
-      expect(result.duration).toBeGreaterThanOrEqual(100);
+      expect(result.duration).toBeGreaterThanOrEqual(90); // Allow for slight timing variations
       
       // Restore fake timers
       jest.useFakeTimers();

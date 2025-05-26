@@ -18,6 +18,7 @@ describe('TemplateEngine', () => {
 
     engine = new TemplateEngine({
       logger: mockLoggerInstance,
+      enableCache: false
     });
   });
 
