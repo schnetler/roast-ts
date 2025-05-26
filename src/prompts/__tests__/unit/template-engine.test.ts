@@ -46,12 +46,27 @@ describe('TemplateEngine', () => {
       expect(typeof compiled).toBe('function');
     });
 
-    it('should cache compiled templates', () => {
+    it('should cache compiled templates when caching is enabled', () => {
+      // Create engine with caching enabled
+      const cachingEngine = new TemplateEngine({
+        logger: mockLoggerInstance,
+        enableCache: true
+      });
+      
+      const template = 'Hello {{name}}!';
+      const compiled1 = cachingEngine.compile(template);
+      const compiled2 = cachingEngine.compile(template);
+      
+      expect(compiled1).toBe(compiled2);
+    });
+    
+    it('should not cache when caching is disabled', () => {
       const template = 'Hello {{name}}!';
       const compiled1 = engine.compile(template);
       const compiled2 = engine.compile(template);
       
-      expect(compiled1).toBe(compiled2);
+      // With caching disabled, we get different function instances
+      expect(compiled1).not.toBe(compiled2);
     });
   });
 
