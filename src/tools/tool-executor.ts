@@ -1,6 +1,8 @@
 import { Tool, ToolContext, ToolExecutionResult } from '../shared/types';
 import { z } from 'zod';
 
+export { ToolContext } from '../shared/types';
+
 export type ToolMiddleware = (
   tool: Tool,
   params: any,

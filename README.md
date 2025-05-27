@@ -326,6 +326,78 @@ const result = await cmdTool.execute({
 });
 ```
 
+### HTTP Tools
+
+Create HTTP tools for API integration:
+
+```typescript
+import { createHttpTool } from 'roast-ts';
+
+// Basic HTTP tool
+const apiTool = createHttpTool({
+  name: 'myApi',
+  baseURL: 'https://api.example.com',
+  headers: {
+    'Accept': 'application/json'
+  }
+});
+
+// HTTP tool with authentication
+const authApiTool = createHttpTool({
+  name: 'githubApi',
+  baseURL: 'https://api.github.com',
+  auth: {
+    type: 'bearer',
+    token: process.env.GITHUB_TOKEN
+  },
+  retryConfig: {
+    maxAttempts: 3,
+    backoff: 'exponential'
+  }
+});
+
+// HTTP tool with predefined endpoints
+const outlookTool = createHttpTool({
+  name: 'outlook',
+  baseURL: 'https://graph.microsoft.com/v1.0',
+  auth: { type: 'oauth2', /* ... */ },
+  endpoints: {
+    getMessages: {
+      path: '/me/messages',
+      method: 'GET',
+      description: 'Get user messages'
+    },
+    sendMail: {
+      path: '/me/sendMail', 
+      method: 'POST',
+      description: 'Send an email'
+    }
+  }
+});
+
+// Use in workflows
+const workflow = createWorkflow('api-workflow')
+  .tool('api', apiTool)
+  .step('fetchData', async (context) => {
+    const result = await context.api({
+      endpoint: '/users',
+      method: 'GET',
+      query: { limit: 10 }
+    });
+    return result.data;
+  });
+
+// Use predefined endpoints
+const emailWorkflow = createWorkflow('email-workflow')
+  .tool('outlook', outlookTool)
+  .step('getEmails', async (context) => {
+    const result = await context.outlook.endpoints.getMessages({
+      query: { $top: 10 }
+    });
+    return result.data.value;
+  });
+```
+
 ## Advanced Usage
 
 ### Custom Tools
