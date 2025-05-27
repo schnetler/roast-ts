@@ -6,7 +6,7 @@
  */
 
 import { z } from 'zod';
-import { Tool, WorkflowConfig } from '../shared/types';
+import { Tool, WorkflowConfig, LLMClient } from '../shared/types';
 
 // Template function for dynamic prompts
 export type TemplateFunction<TContext> = (context: TContext) => string | Promise<string>;
@@ -286,7 +286,7 @@ export interface WorkflowDSL<TContext = {}> {
   
   // Execution
   build(): Workflow<TContext>;
-  run(input?: Partial<TContext>): Promise<TContext>;
+  run(input?: Partial<TContext>, llmClient?: LLMClient): Promise<TContext>;
   dryRun(input?: Partial<TContext>): Promise<ExecutionPlan>;
   validateWorkflow(): ValidationResult;
   

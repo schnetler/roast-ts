@@ -90,12 +90,9 @@ describe('WorkflowDSL Implementation', () => {
         config: {}
       });
       
-      expect(wf.steps).toHaveLength(1);
-      expect(wf.steps[0]).toMatchObject({
-        type: 'tool',
-        name: 'myTool',
-        tool: 'myTool'
-      });
+      // Tools should not create steps, only register in config
+      expect(wf.steps).toHaveLength(0);
+      expect(wf.config.tools!.has('myTool')).toBe(true);
     });
 
     it('should add multiple tools at once', () => {
@@ -111,7 +108,8 @@ describe('WorkflowDSL Implementation', () => {
       
       expect(wf.config.tools).toBeDefined();
       expect(wf.config.tools!.size).toBe(3);
-      expect(wf.steps).toHaveLength(3);
+      // Tools should not create steps
+      expect(wf.steps).toHaveLength(0);
       
       expect(Array.from(wf.config.tools!.keys())).toEqual(['tool1', 'tool2', 'tool3']);
     });
@@ -177,7 +175,7 @@ describe('WorkflowDSL Implementation', () => {
       
       expect(wf.steps).toHaveLength(1);
       expect(wf.steps[0]).toMatchObject({
-        type: 'custom',
+        type: 'step',
         name: 'process',
         handler
       });
@@ -519,7 +517,7 @@ describe('WorkflowDSL Implementation', () => {
       expect(wf.config.model).toBe('gpt-4');
       expect(wf.config.tools).toBeDefined();
       expect(wf.config.tools!.size).toBe(1);
-      expect(wf.steps).toHaveLength(3); // tool, prompt, step
+      expect(wf.steps).toHaveLength(2); // prompt, step (no tool step)
     });
 
     it('should validate before running', async () => {

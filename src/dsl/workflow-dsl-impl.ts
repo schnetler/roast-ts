@@ -30,8 +30,11 @@ import {
   Workflow,
   DSLWorkflowStep
 } from './types';
-import { Tool, WorkflowConfig } from '../shared/types';
+import { Tool, WorkflowConfig, LLMClient } from '../shared/types';
 import { WorkflowEngine } from '../workflow/workflow-engine';
+import { StateManager } from '../state/state-manager';
+import { FileStateRepository } from '../state/file-state-repository';
+import { ToolRegistry } from '../tools/tool-registry';
 
 export class WorkflowDSLImpl<TContext = {}> implements WorkflowDSL<TContext> {
   private config: WorkflowConfig;
@@ -104,13 +107,6 @@ export class WorkflowDSLImpl<TContext = {}> implements WorkflowDSL<TContext> {
       config: {}
     });
     
-    // Add tool step
-    this.workflowSteps.push({
-      type: 'tool',
-      name,
-      tool: name
-    });
-    
     // Type assertion for progressive enhancement
     return this as any;
   }
@@ -125,12 +121,6 @@ export class WorkflowDSLImpl<TContext = {}> implements WorkflowDSL<TContext> {
       this.config.tools!.set(name, {
         tool,
         config: {}
-      });
-      
-      this.workflowSteps.push({
-        type: 'tool',
-        name,
-        tool: name
       });
     });
     
@@ -169,7 +159,7 @@ export class WorkflowDSLImpl<TContext = {}> implements WorkflowDSL<TContext> {
     handler: StepHandler<TContext, TResult>
   ): WorkflowDSL<TContext & Record<K, TResult>> {
     this.workflowSteps.push({
-      type: 'custom',
+      type: 'step',
       name,
       handler
     });
@@ -182,7 +172,7 @@ export class WorkflowDSLImpl<TContext = {}> implements WorkflowDSL<TContext> {
   ): WorkflowDSL<TContext & InferStepContext<TContext, TSteps>> {
     Object.entries(steps).forEach(([name, handler]) => {
       this.workflowSteps.push({
-        type: 'custom',
+        type: 'step',
         name,
         handler
       });
@@ -217,7 +207,7 @@ export class WorkflowDSLImpl<TContext = {}> implements WorkflowDSL<TContext> {
     steps: TSteps
   ): WorkflowDSL<TContext & InferStepContext<TContext, TSteps>> {
     const parallelSteps = Object.entries(steps).map(([name, handler]) => ({
-      type: 'custom' as const,
+      type: 'step' as const,
       name,
       handler
     }));
@@ -377,8 +367,8 @@ export class WorkflowDSLImpl<TContext = {}> implements WorkflowDSL<TContext> {
         case 'prompt':
           baseStep.prompt = step.prompt;
           break;
-        case 'tool':
-          baseStep.tool = step.tool;
+        case 'step':
+          baseStep.handler = step.handler;
           break;
         case 'agent':
           baseStep.maxSteps = step.maxSteps;
@@ -390,6 +380,11 @@ export class WorkflowDSLImpl<TContext = {}> implements WorkflowDSL<TContext> {
           break;
         case 'parallel':
           baseStep.steps = step.steps;
+          break;
+        case 'conditional':
+          baseStep.condition = step.condition;
+          baseStep.ifTrue = step.ifTrue;
+          baseStep.ifFalse = step.ifFalse;
           break;
       }
 
@@ -414,7 +409,7 @@ export class WorkflowDSLImpl<TContext = {}> implements WorkflowDSL<TContext> {
     };
   }
 
-  async run(input?: Partial<TContext>): Promise<TContext> {
+  async run(input?: Partial<TContext>, llmClient?: LLMClient): Promise<TContext> {
     const workflow = this.build();
     
     // Validate workflow structure
@@ -431,12 +426,25 @@ export class WorkflowDSLImpl<TContext = {}> implements WorkflowDSL<TContext> {
       }
     }
     
-    // Create workflow engine with custom step executor
+    // Create required dependencies
+    const stateManager = new StateManager(new FileStateRepository());
+    const toolRegistry = new ToolRegistry();
+    
+    // Register tools from the workflow config
+    if (workflow.config.tools) {
+      for (const [name, toolConfig] of workflow.config.tools) {
+        // Ensure the tool has a name property
+        const tool = { ...toolConfig.tool, name };
+        toolRegistry.register(tool);
+      }
+    }
+    
+    // Create workflow engine with proper dependencies
     const engine = new WorkflowEngine(
       workflow.config,
-      {} as any, // stateManager - will be injected by container
-      {} as any, // toolRegistry - will be injected by container
-      {} as any  // llmClient - will be injected by container
+      stateManager,
+      toolRegistry,
+      llmClient
     );
     
     try {
@@ -559,7 +567,7 @@ export class WorkflowDSLImpl<TContext = {}> implements WorkflowDSL<TContext> {
   // Utility methods
   log(message: string | ((ctx: TContext) => string)): this {
     this.workflowSteps.push({
-      type: 'custom',
+      type: 'step',
       name: `log_${this.workflowSteps.length}`,
       handler: async (ctx: TContext) => {
         const msg = typeof message === 'function' ? message(ctx) : message;
@@ -573,7 +581,7 @@ export class WorkflowDSLImpl<TContext = {}> implements WorkflowDSL<TContext> {
 
   tap(fn: (ctx: TContext) => void | Promise<void>): this {
     this.workflowSteps.push({
-      type: 'custom',
+      type: 'step',
       name: `tap_${this.workflowSteps.length}`,
       handler: async (ctx: TContext) => {
         await fn(ctx);
@@ -588,7 +596,7 @@ export class WorkflowDSLImpl<TContext = {}> implements WorkflowDSL<TContext> {
     fn: (ctx: TContext) => TNewContext
   ): WorkflowDSL<TNewContext> {
     this.workflowSteps.push({
-      type: 'custom',
+      type: 'step',
       name: 'transform',
       handler: fn
     });
