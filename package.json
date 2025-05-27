@@ -1,6 +1,6 @@
 {
   "name": "roast-ts",
-  "version": "0.1.0",
+  "version": "0.1.6",
   "description": "A powerful, type-safe workflow automation framework for building AI-powered applications with LLM integration",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -427,7 +427,7 @@ export class WorkflowDSLImpl<TContext = {}> implements WorkflowDSL<TContext> {
     }
     
     // Create required dependencies
-    const stateManager = new StateManager(new FileStateRepository());
+    const stateManager = new StateManager(new FileStateRepository('.roast/sessions'));
     const toolRegistry = new ToolRegistry();
     
     // Register tools from the workflow config

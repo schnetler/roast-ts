@@ -13,7 +13,7 @@ import {
 } from '../shared/types';
 
 export class StateManager implements IStateManager {
-  private currentState!: WorkflowState;
+  private currentState: WorkflowState | undefined;
   private eventBus: EventBus;
   private store: StateStore;
 
@@ -72,6 +72,10 @@ export class StateManager implements IStateManager {
    * Save step result
    */
   async saveStep(stepName: string, result: any, context: any): Promise<void> {
+    if (!this.currentState) {
+      throw new Error('No active session. Call createSession() or loadSession() first.');
+    }
+    
     // Find or create step state
     let stepState = this.currentState.steps.find(s => s.name === stepName);
     
@@ -143,6 +147,10 @@ export class StateManager implements IStateManager {
   async updateWorkflow(
     updates: Partial<WorkflowState>
   ): Promise<WorkflowState> {
+    if (!this.currentState) {
+      throw new Error('No active session. Call createSession() or loadSession() first.');
+    }
+    
     const newState = {
       ...this.currentState,
       ...updates,
@@ -166,6 +174,10 @@ export class StateManager implements IStateManager {
     stepId: string,
     updates: Partial<StepState>
   ): Promise<WorkflowState> {
+    if (!this.currentState) {
+      throw new Error('No active session. Call createSession() or loadSession() first.');
+    }
+    
     const stepIndex = this.currentState.steps.findIndex(s => s.id === stepId);
     if (stepIndex === -1) {
       throw new Error(`Step not found: ${stepId}`);
@@ -203,6 +215,9 @@ export class StateManager implements IStateManager {
    * Get current immutable state
    */
   getState(): Readonly<WorkflowState> {
+    if (!this.currentState) {
+      throw new Error('No active session. Call createSession() or loadSession() first.');
+    }
     // Deep freeze the state to ensure immutability
     return this.deepFreeze(this.currentState);
   }

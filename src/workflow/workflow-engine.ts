@@ -32,6 +32,10 @@ export class WorkflowEngine<TContext = any> {
       await this.stateManager.createSession(this.config.name);
     }
 
+    // Inject tools into context
+    const toolsContext = this.createToolsContext();
+    context = { ...context, ...toolsContext };
+
     for (const step of this.config.steps) {
       try {
         const result = await this.stepExecutor.execute(step, context);
@@ -57,6 +61,33 @@ export class WorkflowEngine<TContext = any> {
 
   private initializeContext(input?: Partial<TContext>): TContext {
     return (input || {}) as TContext;
+  }
+
+  private createToolsContext(): Record<string, Function> {
+    const toolsContext: Record<string, Function> = {};
+    
+    // Get all registered tools
+    const tools = this.toolRegistry.getAll();
+    
+    // Create callable functions for each tool
+    for (const tool of tools) {
+      if (tool.name) {
+        toolsContext[tool.name] = async (params: any) => {
+          const executeFunction = tool.execute || tool.handler;
+          if (!executeFunction) {
+            throw new Error(`Tool ${tool.name} has no execute or handler function`);
+          }
+          
+          return executeFunction(params, {
+            workflowId: this.config.name,
+            stepId: 'current',
+            logger: console as any
+          });
+        };
+      }
+    }
+    
+    return toolsContext;
   }
 
   private validateConfig(): void {
